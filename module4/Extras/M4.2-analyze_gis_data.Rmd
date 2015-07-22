@@ -1,0 +1,207 @@
+---  
+title: "Module 4: Extract and Analyze GIS Data"
+author: "IALE 2015 R GIS Workshop"	
+date: "July 7, 2015"	
+output:
+  html_document:
+    keep_md: yes
+    pandoc_args:
+    - +RTS
+    - -K64m
+    - -RTS
+    toc: yes
+  pdf_document:
+    toc: yes
+---
+
+# Module 4.2
+## Goals: Perform statistics on extracted point data
+Learn how to analyze raster- and vector-based data, applying common and customized statistical analyses to single or multiple data layers.
+
+## R Packages Needed  
+```{r load packages, message = FALSE}
+library(sp)	
+library(rgdal)	
+library(raster)
+library(fields)
+```	
+	
+## Set Your Working Directory	
+Change this to the correct path name on your machine	
+```{r set working directory}
+setwd("~/Documents/IALE2015_StudentWorkshop/module4")
+```
+
+## Reload data
+Only necessary if you closed R after the last section.
+```{r read in data frame}
+extract_juos <- read.csv("data/outdata/extract_juos.csv")
+topo.cp <- brick("data/outdata/topo_cp.grd")
+soil.cp <- readOGR("data/outdata/soil", "soil") 
+```
+
+Let's make sure it's a data frame type of object, and not something else. 
+```{r class of data frame}
+class(extract_juos)
+```
+
+It's also a good idea to look at the top and bottom of it. 
+```{r head}
+head(extract_juos)
+tail(extract_juos)
+```
+
+## Raster Statistics
+### Compare Rasters
+Let's confirm that our `RasterBrick` has 3 layers and that everything looks right.
+```{r view RasterBrick}
+topo.cp
+```
+
+Let's also note that you can access rasters in the brick using the $ symbol, like for columns in data frames and items in lists.
+```{r view elevation subset of RasterBrick}
+topo.cp$elev
+```
+
+A quick and easy way to see the distribution of values in the rasters and comparing them to each other is the `pairs` function. 
+```{r raster pairs}
+pairs(topo.cp)
+```
+
+`pairs` is a function that is in the `raster` package, but it is also in the `base` package. This can be confusing, because when `pairs` is applied to a Show histograms of individual rasters as well as scatterplots and correlation 
+among pairs. So how do you find out which package a function is from? Just use the handy help function `?`. For a function like `pairs` that has multiple uses, the help function will tell you about both types.
+```{r help pairs}
+?pairs
+```
+
+So how does R know which `pairs` function to use? It all depends on which class the object is. The `raster` version of it will only be applied if it's a `Raster*` object.
+```{r class raster}
+class(topo.cp)
+```
+
+## Summary Statistics on Rasters
+You can calculate statistics on z values for the rasters in a `Raster*` object.
+For example, the mean and standard deviation:
+```{r cellStats}
+cellStats(topo.cp, stat="mean")
+cellStats(topo.cp, stat="sd")
+```
+
+Generally there are multiple ways to do just about everything in R. The methods above are built into the raster package, and the actual computing is probably happening in efficient C code behind the scenes. So these are good for large rasters. However, if your rasters are a more manageable size, like the ones we have now, I prefer to use an alternative that is very flexible.
+```{r raster values}
+summary(topo.cp[])
+summary(topo.cp$elev[])
+```
+
+Then you can do what you want with the values. Many of these functions require you to use the `na.rm = TRUE` argument so that `NA`s aren't included in the calculation. Here is the mean of elevation.
+```{r using [] to access values}
+mean(topo.cp$elev[], na.rm=T)
+```
+
+Here's how you'd get the mean of all three layers.
+```{r means of all 3 layers with []}
+summary(colMeans(topo.cp[], na.rm=T))
+```
+
+## Transformations of Raster Data
+You can transform the raster values. For example, take the log of the elevation values.
+```{r log transform elevation}
+summary(log(topo.cp$elev[]))
+```
+
+`raster` package will even know what to do if you apply operations to the raster object. It will let you do this to the raster object itself. Let's make a new object to hold our log-transformed elevation data.
+```{r save log transformed elevation}
+elev.log <- log(topo.cp$elev)
+```
+
+You could also scale the values from 0 to 1. We'll do that with slope.
+```{r scale slope 0 to 1}
+slp.scale <- topo.cp$slp/max(topo.cp$slp[], na.rm=T)
+```
+
+You can analyze the transformed data as you like.
+```{r log transform histogram etc}
+hist(elev.log)
+summary(elev.log)
+```
+
+You might want to add a transformed raster into your RasterBrick as an extra layer.
+```{r add log transformed elevation to brick}
+topo.cp$elev.log <- elev.log
+```
+
+Alternatively, you might want to substitute one of your `RasterBrick` layers with transformed values.
+```{r replace slope object in brick with scaled one}
+topo.cp$slp[] <- slp.scale[]
+```
+
+## Model Selection
+What is powerful about R is that you can take tabular data extracted from rasters and vectors and you can analyze it with some of the best statistical tools available. One common approach to studying landscape ecology is model selection. Here is a simple example of model selection.
+
+The basic approach is to decide *a priori* which combinations of covariates are reasonable hypotheses. After carefully considering all you know about the biology of the organism, you may be able to develop a series of several combinations of covariates that could explain the data.  
+# Note: these particular models are not derived by an expert - just Karl's guesses for the purpose of demonstration!
+
+First run models on the combinations of covariates of interest. These are run specifically on our `extract_juos` object with raster and vector data extracted into it. The models we're using here are simple linear models, but there any number of other models to use.
+```{r lm}
+elev.lm <- lm(elev ~ juos, data=extract_juos)
+asp.lm <- lm(asp ~ juos, data=extract_juos)
+elev.slp.asp.lm <- lm(elev + slp + asp ~ juos, data=extract_juos)
+elev.clay.lm <- lm(elev + clay ~ juos, data=extract_juos)
+```
+
+By running AIC on these models, we can compare support in the data for each one. The one with the **lowest** score is the best of the set that you tested.
+```{r AIC}
+AIC(elev.lm)
+AIC(asp.lm)
+AIC(elev.slp.asp.lm)
+AIC(elev.clay.lm)
+```
+
+So aspect appears to be the best fit of these 4 options.
+
+## Interpolate Values Between Points
+### Thin plate spline regression 
+There are at least dozens of ways to interpolate values between points in R. This particular one is fairly simple. It fits a model across irregularly spaced points. The `Tps` function is from a package you haven't used yet called `fields`.
+```{r juos Tps}
+juos.tps <- Tps(extract_juos[,1:2], extract_juos$juos)
+```
+
+The raster package has an `interpolate` function that will let you take a `Tps` object and interpolate probabilities of juniper occurrence based on presence/absence data. It requires an existing `raster` object that it will fill with new values, so first we create it from a layer, like elevation.
+```{r interpolate}
+juos.int <- interpolate(topo.cp$elev, juos.tps)
+```
+
+This creates a square raster.
+```{r plot square}
+plot(juos.int)
+```
+
+So let's mask that to the Colorado Plateau perimeter.
+```{r mask interpolation}
+juos.int <- mask(juos.int, topo.cp$elev)
+```
+
+Plot the masked result
+```{r plot mask}
+plot(juos.int)
+```
+
+Write the result to file
+```{r write interpolated raster to file}
+writeRaster(juos.int, "data/outdata/juos_interpolation.tif", overwrite=T)
+```
+
+You can also save it as a `.pdf`, `.png`, or other graphics file type. The first call opens up a new file with the desired name.
+```{r open pdf file}
+pdf("data/outdata/juos_interpolation.pdf")
+```
+
+The next call fills that file with the data it needs.
+```{r plot interpolated data in pdf}
+plot(juos.int)
+```
+
+This call closes up the file so that if you plot anything else, it won't get added to.
+```{r close graphics device, eval=FALSE}
+dev.off()
+```
