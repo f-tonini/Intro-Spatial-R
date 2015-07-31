@@ -101,7 +101,7 @@ To load monthly minimum temperature (tmin) files from WorldClim, we will:
 * load files directly into a stack using `stack`
 * make a basic panel plot using `spplot`
 
-```{r loadStack, echo=-1} 
+```{r loadStack} 
 # list files in working directory subfolder with extension ".bil"
 rasterFiles <- list.files(path = 'data/worldClimClip',  # specify directory
                           pattern = "*tif$",         # restrict file names using regex
@@ -140,7 +140,7 @@ Here, we load band 2 from a Landsat 7 file, which represents the green band.
 
 Note: If you work with remote sensing, there are a few existing packages developed to work with RS data. For example, see the `landsat` package. There's also a `MODIS` package in advanced stages of development (not yet on CRAN but available from R-Forge) for programmatically downloading and processing MODIS tiles; if interested, Jill's written some ancillary code to make working with MODIS pretty easy and automated, available here: https://github.com/jdeines/Get-MODIS-R. 
 
-```{r loadBand, echo=-1}
+```{r loadBand}
 # load raster file, specifying the band argument
 landsat7.2 <- raster("data/etm-038031-042600-123457_CROP.img", band = 2)
 landsat7.2 # get info
@@ -185,7 +185,7 @@ If the format arguments are omitted, `writeRaster` will infer the format from th
 
 Here, we'll write out our binary grid, `cp.ras3`.
 
-```{r writeRaster, echo=-1}
+```{r writeRaster}
 # write out the raster object 'cp.ras3'
 writeRaster(cp.ras3, filename = 'data/outData/cpGrid_wgs84.tif', 
             overwrite = T)
