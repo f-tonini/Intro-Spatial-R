@@ -178,18 +178,20 @@ All shapefiles (points, lines, and polygons) can be written out with the `writeO
 Note that we will use the ESRI shapefile driver to create a .shp file, but the 'driver' argument has many options including GeoJSON, KML, etc. Typing ogrDrivers() at your command line will give a list of available drivers.
 
 ```{r writePoints}
-# write out point shapefile. On Windows at least, new subfolder can be created in call
+# write out point shapefile. 
 writeOGR(obj = juos, dsn = 'data/outData', layer = 'juos_pts_wgs84',
          driver = 'ESRI Shapefile', overwrite_layer=T)
 ```
 
-There should now be a file "juos_pts_wgs84.shp" in your ...IALE2015_RCOURSE\data\outdata folder. 
+There should now be a file "juos_pts_wgs84.shp" in your ...Intro-Spatial-R\module1\data\outdata folder. 
 
 End Module 1.1.
 
 ```{r eval=FALSE, include=FALSE}
+# convert .Rmd script to .R file for instruction
+# note .R file subsequently cleaned up for code margin of ~80 char
 
-rmd2rscript <- function(infile){
+rmd2rscript <- function(infile,outfile){
   # read the file
   flIn <- readLines(infile)
   # identify the start of code blocks
@@ -216,15 +218,16 @@ rmd2rscript <- function(infile){
     flIn[i] <- paste("# ", flIn[i], sep = "")
   }
   # create an output file
-  nm <- strsplit(infile, split = "\\.")[[1]][1]
-  flOut <- file(paste(nm, "[rmd2r].R", sep = ""), "w")
+  #nm <- strsplit(infile, split = "\\.")[[1]][1]
+  flOut <- file(outfile, "w")
   for(i in 1:length(flIn)){
     cat(flIn[i], "\n", file = flOut, sep = "\t")
   }
   close(flOut)
 }
 
-infile <- 'C:/Users/deinesji/Dropbox/1PhdJill/miscPresentations/IALE_2015/RWorkshop/WorkshopCode/M1.1-ImportExport-Shapefiles.Rmd'
+infile <- 'D:/RWorkshop/Intro-Spatial-R/module1/extras/M1.1-ImportExport-Shapefiles.Rmd'
+outfile <- 'D:/RWorkshop/Intro-Spatial-R/module1/Rscripts/M1.1-ImportExport-Shapefiles.R'
 
-rmd2rscript(infile)
+rmd2rscript(infile, outfile)
 ```

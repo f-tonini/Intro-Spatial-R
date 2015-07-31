@@ -298,10 +298,10 @@ legend(&quot;topleft&quot;,                          # position in plot
 <h2>Write Out Shapefile</h2>
 <p>All shapefiles (points, lines, and polygons) can be written out with the <code>writeOGR</code> function in the rgdal package. Here we demonstrate with our newly created spatial point object, which we will write out to the “outData” subfolder within the module 1 data directory and call “juos_pts_wgs84.shp”.</p>
 <p>Note that we will use the ESRI shapefile driver to create a .shp file, but the ‘driver’ argument has many options including GeoJSON, KML, etc. Typing ogrDrivers() at your command line will give a list of available drivers.</p>
-<pre class="r"><code># write out point shapefile. On Windows at least, new subfolder can be created in call
+<pre class="r"><code># write out point shapefile. 
 writeOGR(obj = juos, dsn = 'data/outData', layer = 'juos_pts_wgs84',
          driver = 'ESRI Shapefile', overwrite_layer=T)</code></pre>
-<p>There should now be a file “juos_pts_wgs84.shp” in your …IALE2015_RCOURSEfolder.</p>
+<p>There should now be a file “juos_pts_wgs84.shp” in your …Intro-Spatial-R1folder.</p>
 <p>End Module 1.1.</p>
 </div>
 

@@ -197,7 +197,7 @@ End Module 1.2
 # convert .Rmd script to .R file for instruction
 # note .R file subsequently cleaned up for code margin of ~80 char
 
-rmd2rscript <- function(infile){
+rmd2rscript <- function(infile,outfile){
   # read the file
   flIn <- readLines(infile)
   # identify the start of code blocks
@@ -224,15 +224,16 @@ rmd2rscript <- function(infile){
     flIn[i] <- paste("# ", flIn[i], sep = "")
   }
   # create an output file
-  nm <- strsplit(infile, split = "\\.")[[1]][1]
-  flOut <- file(paste(nm, "[rmd2r].R", sep = ""), "w")
+  #nm <- strsplit(infile, split = "\\.")[[1]][1]
+  flOut <- file(outfile, "w")
   for(i in 1:length(flIn)){
     cat(flIn[i], "\n", file = flOut, sep = "\t")
   }
   close(flOut)
 }
 
-infile <- 'C:/Users/deinesji/Dropbox/1PhdJill/miscPresentations/IALE_2015/RWorkshop/WorkshopCode/M1.2-ImportExport-Rasters.Rmd'
+infile <- 'D:/RWorkshop/Intro-Spatial-R/module1/extras/M1.2-ImportExport-Rasters.Rmd'
+outfile <- 'D:/RWorkshop/Intro-Spatial-R/module1/Rscripts/M1.2-ImportExport-Rasters.R'
 
-rmd2rscript(infile)
+rmd2rscript(infile, outfile)
 ```
