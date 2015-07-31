@@ -3,3 +3,8 @@ This repo contains all the scripts and materials used for the student workshop, 
 
 ### Original Workshop Instructors & Contributors
 Jill Deines, Tom Edwards, Whalen Dillon, Karl Jarvis, Francesco Tonini
+
+## Workshop Contents
+### Module 1: Getting GIS Data In and Out of R
+* M1.1: Importing and Exporting Vector GIS Data in R
+* M1.2: Importing and Exporting Raster GIS Data in R
