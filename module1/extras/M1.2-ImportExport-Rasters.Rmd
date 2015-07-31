@@ -12,7 +12,7 @@ Module 1.2 code by Jillian Deines, Michigan State University
 
 ```{r knitrOptions, include=FALSE}
 library(knitr)
-opts_chunk$set(cache=FALSE, fig.keep='none')
+opts_chunk$set(cache=TRUE, fig.path='figures/m1.2')
 opts_knit$set(root.dir = 'D:/RWorkshop/Intro-Spatial-R/module1')
 ```
 
