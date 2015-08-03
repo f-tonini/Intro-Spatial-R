@@ -1,19 +1,6 @@
-#' ---	
-#' title: 'Module 3: Modifying GIS Data in R'	
-#' author: "IALE 2015 R GIS Workshop"	
-#' date: "June 8, 2015"	
-#' output:	
-#'   html_document:	
-#'     keep_md: yes	
-#'     toc: yes	
-#'   pdf_document:	
-#'     toc: yes	
-#' ---	
-#' 	
 #' # Goal: Learn how to access and modify raster and vector data	
 #' 	
 #' ## R Packages Needed	
-#' 	
 #' 	
 library(sp)	
 library(rgdal)	
@@ -24,12 +11,9 @@ library(latticeExtra)
 #' ## Set Your Working Directory	
 #' 	
 #' Change this to the correct path name on your machine	
+setwd("~/Documents/Intro-Spatial-R")	
 #' 	
-#' 	
-setwd("~/Documents/IALE2015_StudentWorkshop/IALE2015_gisRcourse")	
-#' 	
-#' 	
-#' This is the syntax for the path on an Apple/Mac for a subfolder in the `Documents` directory.	
+#' This is the syntax for the path on an Apple/Mac for a subfolder in the `Documents` directory. To find out your current working directory in `R` run the command `getwd()` and use `setwd()` to set you working directory. Help for loaded `R` functions can be accessed by running `?function_name` on the command line, e.g. `?setwd`	
 #' 	
 #' ## Read in Shapefiles	
 #' 	
@@ -41,8 +25,6 @@ deer_unit <- readOGR(dsn = "data", layer = "deerrange_UT") # Game management uni
 #' 	
 #' 	
 #' Take a look at the game management data we loaded	
-#' 	
-#' 	
 summary(deer_unit)	
 #' 	
 #' 	
