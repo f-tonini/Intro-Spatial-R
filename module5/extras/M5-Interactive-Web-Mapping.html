@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+
+<title>Module 5: Interactive online mapping and visualization using R</title>
+
+<script type="text/javascript">
+window.onload = function() {
+  var imgs = document.getElementsByTagName('img'), i, img;
+  for (i = 0; i < imgs.length; i++) {
+    img = imgs[i];
+    // center an image if it is the only element of its parent
+    if (img.parentElement.childElementCount === 1)
+      img.parentElement.style.textAlign = 'center';
+  }
+};
+</script>
+
+<!-- Styles for R syntax highlighter -->
+<style type="text/css">
+   pre .operator,
+   pre .paren {
+     color: rgb(104, 118, 135)
+   }
+
+   pre .literal {
+     color: #990073
+   }
+
+   pre .number {
+     color: #099;
+   }
+
+   pre .comment {
+     color: #998;
+     font-style: italic
+   }
+
+   pre .keyword {
+     color: #900;
+     font-weight: bold
+   }
+
+   pre .identifier {
+     color: rgb(0, 0, 0);
+   }
+
+   pre .string {
+     color: #d14;
+   }
+</style>
+
+<!-- R syntax highlighter -->
+<script type="text/javascript">
+var hljs=new function(){function m(p){return p.replace(/&/gm,"&amp;").replace(/</gm,"&lt;")}function f(r,q,p){return RegExp(q,"m"+(r.cI?"i":"")+(p?"g":""))}function b(r){for(var p=0;p<r.childNodes.length;p++){var q=r.childNodes[p];if(q.nodeName=="CODE"){return q}if(!(q.nodeType==3&&q.nodeValue.match(/\s+/))){break}}}function h(t,s){var p="";for(var r=0;r<t.childNodes.length;r++){if(t.childNodes[r].nodeType==3){var q=t.childNodes[r].nodeValue;if(s){q=q.replace(/\n/g,"")}p+=q}else{if(t.childNodes[r].nodeName=="BR"){p+="\n"}else{p+=h(t.childNodes[r])}}}if(/MSIE [678]/.test(navigator.userAgent)){p=p.replace(/\r/g,"\n")}return p}function a(s){var r=s.className.split(/\s+/);r=r.concat(s.parentNode.className.split(/\s+/));for(var q=0;q<r.length;q++){var p=r[q].replace(/^language-/,"");if(e[p]){return p}}}function c(q){var p=[];(function(s,t){for(var r=0;r<s.childNodes.length;r++){if(s.childNodes[r].nodeType==3){t+=s.childNodes[r].nodeValue.length}else{if(s.childNodes[r].nodeName=="BR"){t+=1}else{if(s.childNodes[r].nodeType==1){p.push({event:"start",offset:t,node:s.childNodes[r]});t=arguments.callee(s.childNodes[r],t);p.push({event:"stop",offset:t,node:s.childNodes[r]})}}}}return t})(q,0);return p}function k(y,w,x){var q=0;var z="";var s=[];function u(){if(y.length&&w.length){if(y[0].offset!=w[0].offset){return(y[0].offset<w[0].offset)?y:w}else{return w[0].event=="start"?y:w}}else{return y.length?y:w}}function t(D){var A="<"+D.nodeName.toLowerCase();for(var B=0;B<D.attributes.length;B++){var C=D.attributes[B];A+=" "+C.nodeName.toLowerCase();if(C.value!==undefined&&C.value!==false&&C.value!==null){A+='="'+m(C.value)+'"'}}return A+">"}while(y.length||w.length){var v=u().splice(0,1)[0];z+=m(x.substr(q,v.offset-q));q=v.offset;if(v.event=="start"){z+=t(v.node);s.push(v.node)}else{if(v.event=="stop"){var p,r=s.length;do{r--;p=s[r];z+=("</"+p.nodeName.toLowerCase()+">")}while(p!=v.node);s.splice(r,1);while(r<s.length){z+=t(s[r]);r++}}}}return z+m(x.substr(q))}function j(){function q(x,y,v){if(x.compiled){return}var u;var s=[];if(x.k){x.lR=f(y,x.l||hljs.IR,true);for(var w in x.k){if(!x.k.hasOwnProperty(w)){continue}if(x.k[w] instanceof Object){u=x.k[w]}else{u=x.k;w="keyword"}for(var r in u){if(!u.hasOwnProperty(r)){continue}x.k[r]=[w,u[r]];s.push(r)}}}if(!v){if(x.bWK){x.b="\\b("+s.join("|")+")\\s"}x.bR=f(y,x.b?x.b:"\\B|\\b");if(!x.e&&!x.eW){x.e="\\B|\\b"}if(x.e){x.eR=f(y,x.e)}}if(x.i){x.iR=f(y,x.i)}if(x.r===undefined){x.r=1}if(!x.c){x.c=[]}x.compiled=true;for(var t=0;t<x.c.length;t++){if(x.c[t]=="self"){x.c[t]=x}q(x.c[t],y,false)}if(x.starts){q(x.starts,y,false)}}for(var p in e){if(!e.hasOwnProperty(p)){continue}q(e[p].dM,e[p],true)}}function d(B,C){if(!j.called){j();j.called=true}function q(r,M){for(var L=0;L<M.c.length;L++){if((M.c[L].bR.exec(r)||[null])[0]==r){return M.c[L]}}}function v(L,r){if(D[L].e&&D[L].eR.test(r)){return 1}if(D[L].eW){var M=v(L-1,r);return M?M+1:0}return 0}function w(r,L){return L.i&&L.iR.test(r)}function K(N,O){var M=[];for(var L=0;L<N.c.length;L++){M.push(N.c[L].b)}var r=D.length-1;do{if(D[r].e){M.push(D[r].e)}r--}while(D[r+1].eW);if(N.i){M.push(N.i)}return f(O,M.join("|"),true)}function p(M,L){var N=D[D.length-1];if(!N.t){N.t=K(N,E)}N.t.lastIndex=L;var r=N.t.exec(M);return r?[M.substr(L,r.index-L),r[0],false]:[M.substr(L),"",true]}function z(N,r){var L=E.cI?r[0].toLowerCase():r[0];var M=N.k[L];if(M&&M instanceof Array){return M}return false}function F(L,P){L=m(L);if(!P.k){return L}var r="";var O=0;P.lR.lastIndex=0;var M=P.lR.exec(L);while(M){r+=L.substr(O,M.index-O);var N=z(P,M);if(N){x+=N[1];r+='<span class="'+N[0]+'">'+M[0]+"</span>"}else{r+=M[0]}O=P.lR.lastIndex;M=P.lR.exec(L)}return r+L.substr(O,L.length-O)}function J(L,M){if(M.sL&&e[M.sL]){var r=d(M.sL,L);x+=r.keyword_count;return r.value}else{return F(L,M)}}function I(M,r){var L=M.cN?'<span class="'+M.cN+'">':"";if(M.rB){y+=L;M.buffer=""}else{if(M.eB){y+=m(r)+L;M.buffer=""}else{y+=L;M.buffer=r}}D.push(M);A+=M.r}function G(N,M,Q){var R=D[D.length-1];if(Q){y+=J(R.buffer+N,R);return false}var P=q(M,R);if(P){y+=J(R.buffer+N,R);I(P,M);return P.rB}var L=v(D.length-1,M);if(L){var O=R.cN?"</span>":"";if(R.rE){y+=J(R.buffer+N,R)+O}else{if(R.eE){y+=J(R.buffer+N,R)+O+m(M)}else{y+=J(R.buffer+N+M,R)+O}}while(L>1){O=D[D.length-2].cN?"</span>":"";y+=O;L--;D.length--}var r=D[D.length-1];D.length--;D[D.length-1].buffer="";if(r.starts){I(r.starts,"")}return R.rE}if(w(M,R)){throw"Illegal"}}var E=e[B];var D=[E.dM];var A=0;var x=0;var y="";try{var s,u=0;E.dM.buffer="";do{s=p(C,u);var t=G(s[0],s[1],s[2]);u+=s[0].length;if(!t){u+=s[1].length}}while(!s[2]);if(D.length>1){throw"Illegal"}return{r:A,keyword_count:x,value:y}}catch(H){if(H=="Illegal"){return{r:0,keyword_count:0,value:m(C)}}else{throw H}}}function g(t){var p={keyword_count:0,r:0,value:m(t)};var r=p;for(var q in e){if(!e.hasOwnProperty(q)){continue}var s=d(q,t);s.language=q;if(s.keyword_count+s.r>r.keyword_count+r.r){r=s}if(s.keyword_count+s.r>p.keyword_count+p.r){r=p;p=s}}if(r.language){p.second_best=r}return p}function i(r,q,p){if(q){r=r.replace(/^((<[^>]+>|\t)+)/gm,function(t,w,v,u){return w.replace(/\t/g,q)})}if(p){r=r.replace(/\n/g,"<br>")}return r}function n(t,w,r){var x=h(t,r);var v=a(t);var y,s;if(v){y=d(v,x)}else{return}var q=c(t);if(q.length){s=document.createElement("pre");s.innerHTML=y.value;y.value=k(q,c(s),x)}y.value=i(y.value,w,r);var u=t.className;if(!u.match("(\\s|^)(language-)?"+v+"(\\s|$)")){u=u?(u+" "+v):v}if(/MSIE [678]/.test(navigator.userAgent)&&t.tagName=="CODE"&&t.parentNode.tagName=="PRE"){s=t.parentNode;var p=document.createElement("div");p.innerHTML="<pre><code>"+y.value+"</code></pre>";t=p.firstChild.firstChild;p.firstChild.cN=s.cN;s.parentNode.replaceChild(p.firstChild,s)}else{t.innerHTML=y.value}t.className=u;t.result={language:v,kw:y.keyword_count,re:y.r};if(y.second_best){t.second_best={language:y.second_best.language,kw:y.second_best.keyword_count,re:y.second_best.r}}}function o(){if(o.called){return}o.called=true;var r=document.getElementsByTagName("pre");for(var p=0;p<r.length;p++){var q=b(r[p]);if(q){n(q,hljs.tabReplace)}}}function l(){if(window.addEventListener){window.addEventListener("DOMContentLoaded",o,false);window.addEventListener("load",o,false)}else{if(window.attachEvent){window.attachEvent("onload",o)}else{window.onload=o}}}var e={};this.LANGUAGES=e;this.highlight=d;this.highlightAuto=g;this.fixMarkup=i;this.highlightBlock=n;this.initHighlighting=o;this.initHighlightingOnLoad=l;this.IR="[a-zA-Z][a-zA-Z0-9_]*";this.UIR="[a-zA-Z_][a-zA-Z0-9_]*";this.NR="\\b\\d+(\\.\\d+)?";this.CNR="\\b(0[xX][a-fA-F0-9]+|(\\d+(\\.\\d*)?|\\.\\d+)([eE][-+]?\\d+)?)";this.BNR="\\b(0b[01]+)";this.RSR="!|!=|!==|%|%=|&|&&|&=|\\*|\\*=|\\+|\\+=|,|\\.|-|-=|/|/=|:|;|<|<<|<<=|<=|=|==|===|>|>=|>>|>>=|>>>|>>>=|\\?|\\[|\\{|\\(|\\^|\\^=|\\||\\|=|\\|\\||~";this.ER="(?![\\s\\S])";this.BE={b:"\\\\.",r:0};this.ASM={cN:"string",b:"'",e:"'",i:"\\n",c:[this.BE],r:0};this.QSM={cN:"string",b:'"',e:'"',i:"\\n",c:[this.BE],r:0};this.CLCM={cN:"comment",b:"//",e:"$"};this.CBLCLM={cN:"comment",b:"/\\*",e:"\\*/"};this.HCM={cN:"comment",b:"#",e:"$"};this.NM={cN:"number",b:this.NR,r:0};this.CNM={cN:"number",b:this.CNR,r:0};this.BNM={cN:"number",b:this.BNR,r:0};this.inherit=function(r,s){var p={};for(var q in r){p[q]=r[q]}if(s){for(var q in s){p[q]=s[q]}}return p}}();hljs.LANGUAGES.cpp=function(){var a={keyword:{"false":1,"int":1,"float":1,"while":1,"private":1,"char":1,"catch":1,"export":1,virtual:1,operator:2,sizeof:2,dynamic_cast:2,typedef:2,const_cast:2,"const":1,struct:1,"for":1,static_cast:2,union:1,namespace:1,unsigned:1,"long":1,"throw":1,"volatile":2,"static":1,"protected":1,bool:1,template:1,mutable:1,"if":1,"public":1,friend:2,"do":1,"return":1,"goto":1,auto:1,"void":2,"enum":1,"else":1,"break":1,"new":1,extern:1,using:1,"true":1,"class":1,asm:1,"case":1,typeid:1,"short":1,reinterpret_cast:2,"default":1,"double":1,register:1,explicit:1,signed:1,typename:1,"try":1,"this":1,"switch":1,"continue":1,wchar_t:1,inline:1,"delete":1,alignof:1,char16_t:1,char32_t:1,constexpr:1,decltype:1,noexcept:1,nullptr:1,static_assert:1,thread_local:1,restrict:1,_Bool:1,complex:1},built_in:{std:1,string:1,cin:1,cout:1,cerr:1,clog:1,stringstream:1,istringstream:1,ostringstream:1,auto_ptr:1,deque:1,list:1,queue:1,stack:1,vector:1,map:1,set:1,bitset:1,multiset:1,multimap:1,unordered_set:1,unordered_map:1,unordered_multiset:1,unordered_multimap:1,array:1,shared_ptr:1}};return{dM:{k:a,i:"</",c:[hljs.CLCM,hljs.CBLCLM,hljs.QSM,{cN:"string",b:"'\\\\?.",e:"'",i:"."},{cN:"number",b:"\\b(\\d+(\\.\\d*)?|\\.\\d+)(u|U|l|L|ul|UL|f|F)"},hljs.CNM,{cN:"preprocessor",b:"#",e:"$"},{cN:"stl_container",b:"\\b(deque|list|queue|stack|vector|map|set|bitset|multiset|multimap|unordered_map|unordered_set|unordered_multiset|unordered_multimap|array)\\s*<",e:">",k:a,r:10,c:["self"]}]}}}();hljs.LANGUAGES.r={dM:{c:[hljs.HCM,{cN:"number",b:"\\b0[xX][0-9a-fA-F]+[Li]?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+(?:[eE][+\\-]?\\d*)?L\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\b\\d+\\.(?!\\d)(?:i\\b)?",e:hljs.IMMEDIATE_RE,r:1},{cN:"number",b:"\\b\\d+(?:\\.\\d*)?(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"number",b:"\\.\\d+(?:[eE][+\\-]?\\d*)?i?\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"keyword",b:"(?:tryCatch|library|setGeneric|setGroupGeneric)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\.",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\.\\.\\d+(?![\\w.])",e:hljs.IMMEDIATE_RE,r:10},{cN:"keyword",b:"\\b(?:function)",e:hljs.IMMEDIATE_RE,r:2},{cN:"keyword",b:"(?:if|in|break|next|repeat|else|for|return|switch|while|try|stop|warning|require|attach|detach|source|setMethod|setClass)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"literal",b:"(?:NA|NA_integer_|NA_real_|NA_character_|NA_complex_)\\b",e:hljs.IMMEDIATE_RE,r:10},{cN:"literal",b:"(?:NULL|TRUE|FALSE|T|F|Inf|NaN)\\b",e:hljs.IMMEDIATE_RE,r:1},{cN:"identifier",b:"[a-zA-Z.][a-zA-Z0-9._]*\\b",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"<\\-(?!\\s*\\d)",e:hljs.IMMEDIATE_RE,r:2},{cN:"operator",b:"\\->|<\\-",e:hljs.IMMEDIATE_RE,r:1},{cN:"operator",b:"%%|~",e:hljs.IMMEDIATE_RE},{cN:"operator",b:">=|<=|==|!=|\\|\\||&&|=|\\+|\\-|\\*|/|\\^|>|<|!|&|\\||\\$|:",e:hljs.IMMEDIATE_RE,r:0},{cN:"operator",b:"%",e:"%",i:"\\n",r:1},{cN:"identifier",b:"`",e:"`",r:0},{cN:"string",b:'"',e:'"',c:[hljs.BE],r:0},{cN:"string",b:"'",e:"'",c:[hljs.BE],r:0},{cN:"paren",b:"[[({\\])}]",e:hljs.IMMEDIATE_RE,r:0}]}};
+hljs.initHighlightingOnLoad();
+</script>
+
+
+
+<style type="text/css">
+body, td {
+   font-family: sans-serif;
+   background-color: white;
+   font-size: 13px;
+}
+
+body {
+  max-width: 800px;
+  margin: auto;
+  padding: 1em;
+  line-height: 20px;
+}
+
+tt, code, pre {
+   font-family: 'DejaVu Sans Mono', 'Droid Sans Mono', 'Lucida Console', Consolas, Monaco, monospace;
+}
+
+h1 {
+   font-size:2.2em;
+}
+
+h2 {
+   font-size:1.8em;
+}
+
+h3 {
+   font-size:1.4em;
+}
+
+h4 {
+   font-size:1.0em;
+}
+
+h5 {
+   font-size:0.9em;
+}
+
+h6 {
+   font-size:0.8em;
+}
+
+a:visited {
+   color: rgb(50%, 0%, 50%);
+}
+
+pre, img {
+  max-width: 100%;
+}
+pre {
+  overflow-x: auto;
+}
+pre code {
+   display: block; padding: 0.5em;
+}
+
+code {
+  font-size: 92%;
+  border: 1px solid #ccc;
+}
+
+code[class] {
+  background-color: #F8F8F8;
+}
+
+table, td, th {
+  border: none;
+}
+
+blockquote {
+   color:#666666;
+   margin:0;
+   padding-left: 1em;
+   border-left: 0.5em #EEE solid;
+}
+
+hr {
+   height: 0px;
+   border-bottom: none;
+   border-top-width: thin;
+   border-top-style: dotted;
+   border-top-color: #999999;
+}
+
+@media print {
+   * {
+      background: transparent !important;
+      color: black !important;
+      filter:none !important;
+      -ms-filter: none !important;
+   }
+
+   body {
+      font-size:12pt;
+      max-width:100%;
+   }
+
+   a, a:visited {
+      text-decoration: underline;
+   }
+
+   hr {
+      visibility: hidden;
+      page-break-before: always;
+   }
+
+   pre, blockquote {
+      padding-right: 1em;
+      page-break-inside: avoid;
+   }
+
+   tr, img {
+      page-break-inside: avoid;
+   }
+
+   img {
+      max-width: 100% !important;
+   }
+
+   @page :left {
+      margin: 15mm 20mm 15mm 10mm;
+   }
+
+   @page :right {
+      margin: 15mm 10mm 15mm 20mm;
+   }
+
+   p, h2, h3 {
+      orphans: 3; widows: 3;
+   }
+
+   h2, h3 {
+      page-break-after: avoid;
+   }
+}
+</style>
+
+
+
+</head>
+
+<body>
+<h1>Module 5: Interactive online mapping and visualization using R</h1>
+
+<p><strong>author: Francesco Tonini</strong><br/>
+<strong>email: <a href="mailto:ftonini84@gmail.com">ftonini84@gmail.com</a></strong><br/>
+<strong>date: June 8, 2015</strong><br/>
+<strong>event: IALE 2015 R GIS Workshop</strong></p>
+
+<h3>Goal: Learn how to create interactive online maps with R</h3>
+
+<h2>R Packages Needed</h2>
+
+<pre><code class="r">library(rgdal)   #for reading/writing geo files
+library(rgeos)   #for simplification
+library(sp)
+library(plyr)
+library(dplyr)
+library(leafletR)
+library(maptools)
+library(RColorBrewer)
+library(Quandl)
+library(reshape2)
+</code></pre>
+
+<pre><code class="r">library(devtools)
+##The R packages rCharts and rMaps are not available on CRAN yet.
+##Run the following code to install from Github repo prior to loading the libraries:
+##install_github(&#39;ramnathv/rCharts&#39;)
+##install_github(&#39;ramnathv/rMaps&#39;)
+library(rCharts)
+library(rMaps)
+</code></pre>
+
+<h2>Set Your Working Directory</h2>
+
+<p>Change this to the correct path name on your machine</p>
+
+<pre><code class="r">setwd(&quot;D:/Google Drive/IALE2015/r_code/module5&quot;)
+#setwd(&quot;path_to_your_folder&quot;)   # for Windows users
+#setwd(&quot;~/path_to_your_folder&quot;&quot;) # ~ for Mac users
+</code></pre>
+
+<h2><em>Module 5.1: Create an interactive online map using the leafletR package</em></h2>
+
+<h2>Read shapefiles</h2>
+
+<p>Here we import a polygon boundary of the state of Utah and a set of polygons representing game management units within the state.</p>
+
+<pre><code class="r">deer_unit &lt;- readOGR(dsn = &quot;data&quot;, layer = &quot;deerrange_UT&quot;) # Game management units
+</code></pre>
+
+<pre><code>## OGR data source with driver: ESRI Shapefile 
+## Source: &quot;data&quot;, layer: &quot;deerrange_UT&quot;
+## with 29 features and 16 fields
+## Feature type: wkbPolygon with 2 dimensions
+</code></pre>
+
+<p>The attribute data is stored in a slot called <code>@data</code> so if we just want to look at the data stored in the object:</p>
+
+<pre><code class="r">summary(deer_unit@data)
+</code></pre>
+
+<pre><code>##    FID_ungula             UName         UNum     
+##  Min.   : 1.00   South Slope : 4   Min.   : 1.0  
+##  1st Qu.:15.00   Nine Mile   : 2   1st Qu.: 9.0  
+##  Median :24.00   North Slope : 2   Median :14.0  
+##  Mean   :24.14   Wasatch Mtns: 2   Mean   :15.1  
+##  3rd Qu.:39.00   West Desert : 2   3rd Qu.:20.0  
+##  Max.   :46.00   Book Cliffs : 1   Max.   :30.0  
+##                  (Other)     :16                 
+##                       SUName       SUNum       AREA_km2      
+##  none                    :11   10ab   : 1   Min.   :  589.1  
+##  Abajo Mountains         : 1   11a    : 1   1st Qu.: 2655.1  
+##  Anthro                  : 1   11b    : 1   Median : 3968.5  
+##  Bitter Creek, south     : 1   12     : 1   Mean   : 5873.3  
+##  Bonanza                 : 1   13a    : 1   3rd Qu.: 6637.8  
+##  Currant Creek-Avintaquin: 1   14a    : 1   Max.   :23325.1  
+##  (Other)                 :13   (Other):23                    
+##    SURF_AREA         DEER          DEER_SD            ELK       
+##  Min.   : 180   Min.   :    0   Min.   :   0.0   Min.   :    0  
+##  1st Qu.: 998   1st Qu.: 1530   1st Qu.: 171.0   1st Qu.:  109  
+##  Median :1781   Median : 8300   Median : 524.0   Median : 1020  
+##  Mean   :2004   Mean   : 7534   Mean   : 704.8   Mean   : 1767  
+##  3rd Qu.:3161   3rd Qu.:11110   3rd Qu.:1089.0   3rd Qu.: 2210  
+##  Max.   :4955   Max.   :21180   Max.   :1875.0   Max.   :11180  
+##                                                                 
+##      ELK_SD          FAWNS          FAWN_SD           CALVES  
+##  Min.   :  0.0   Min.   : 0.00   Min.   : 0.000   Min.   : 0  
+##  1st Qu.: 30.0   1st Qu.:54.00   1st Qu.: 5.000   1st Qu.: 0  
+##  Median : 91.0   Median :61.00   Median : 6.300   Median : 0  
+##  Mean   :167.4   Mean   :54.52   Mean   : 6.852   Mean   :15  
+##  3rd Qu.:226.0   3rd Qu.:66.00   3rd Qu.: 9.000   3rd Qu.:42  
+##  Max.   :968.0   Max.   :79.00   Max.   :14.400   Max.   :56  
+##                                                               
+##     CALF_SD         ANNRANGE       
+##  Min.   :0.000   Min.   :   2.562  
+##  1st Qu.:0.000   1st Qu.:  41.457  
+##  Median :0.000   Median : 178.747  
+##  Mean   :1.783   Mean   : 551.329  
+##  3rd Qu.:3.000   3rd Qu.: 639.717  
+##  Max.   :8.600   Max.   :2742.693  
+## 
+</code></pre>
+
+<pre><code class="r">names(deer_unit) # The attribute data names
+</code></pre>
+
+<pre><code>##  [1] &quot;FID_ungula&quot; &quot;UName&quot;      &quot;UNum&quot;       &quot;SUName&quot;     &quot;SUNum&quot;     
+##  [6] &quot;AREA_km2&quot;   &quot;SURF_AREA&quot;  &quot;DEER&quot;       &quot;DEER_SD&quot;    &quot;ELK&quot;       
+## [11] &quot;ELK_SD&quot;     &quot;FAWNS&quot;      &quot;FAWN_SD&quot;    &quot;CALVES&quot;     &quot;CALF_SD&quot;   
+## [16] &quot;ANNRANGE&quot;
+</code></pre>
+
+<pre><code class="r">class(deer_unit)
+</code></pre>
+
+<pre><code>## [1] &quot;SpatialPolygonsDataFrame&quot;
+## attr(,&quot;package&quot;)
+## [1] &quot;sp&quot;
+</code></pre>
+
+<h2>Calculate a new field for vector data</h2>
+
+<p>Calculating a new field is as easy as adding a new column to any other data frame in <code>R</code>. Say we want to calcualte a new field from the existing data, such as the total number of adult deer and elk in each management unit:</p>
+
+<pre><code class="r">deer_unit$tot_deer_elk &lt;- rowSums(cbind(deer_unit$DEER, deer_unit$ELK))
+summary(deer_unit@data)
+</code></pre>
+
+<pre><code>##    FID_ungula             UName         UNum     
+##  Min.   : 1.00   South Slope : 4   Min.   : 1.0  
+##  1st Qu.:15.00   Nine Mile   : 2   1st Qu.: 9.0  
+##  Median :24.00   North Slope : 2   Median :14.0  
+##  Mean   :24.14   Wasatch Mtns: 2   Mean   :15.1  
+##  3rd Qu.:39.00   West Desert : 2   3rd Qu.:20.0  
+##  Max.   :46.00   Book Cliffs : 1   Max.   :30.0  
+##                  (Other)     :16                 
+##                       SUName       SUNum       AREA_km2      
+##  none                    :11   10ab   : 1   Min.   :  589.1  
+##  Abajo Mountains         : 1   11a    : 1   1st Qu.: 2655.1  
+##  Anthro                  : 1   11b    : 1   Median : 3968.5  
+##  Bitter Creek, south     : 1   12     : 1   Mean   : 5873.3  
+##  Bonanza                 : 1   13a    : 1   3rd Qu.: 6637.8  
+##  Currant Creek-Avintaquin: 1   14a    : 1   Max.   :23325.1  
+##  (Other)                 :13   (Other):23                    
+##    SURF_AREA         DEER          DEER_SD            ELK       
+##  Min.   : 180   Min.   :    0   Min.   :   0.0   Min.   :    0  
+##  1st Qu.: 998   1st Qu.: 1530   1st Qu.: 171.0   1st Qu.:  109  
+##  Median :1781   Median : 8300   Median : 524.0   Median : 1020  
+##  Mean   :2004   Mean   : 7534   Mean   : 704.8   Mean   : 1767  
+##  3rd Qu.:3161   3rd Qu.:11110   3rd Qu.:1089.0   3rd Qu.: 2210  
+##  Max.   :4955   Max.   :21180   Max.   :1875.0   Max.   :11180  
+##                                                                 
+##      ELK_SD          FAWNS          FAWN_SD           CALVES  
+##  Min.   :  0.0   Min.   : 0.00   Min.   : 0.000   Min.   : 0  
+##  1st Qu.: 30.0   1st Qu.:54.00   1st Qu.: 5.000   1st Qu.: 0  
+##  Median : 91.0   Median :61.00   Median : 6.300   Median : 0  
+##  Mean   :167.4   Mean   :54.52   Mean   : 6.852   Mean   :15  
+##  3rd Qu.:226.0   3rd Qu.:66.00   3rd Qu.: 9.000   3rd Qu.:42  
+##  Max.   :968.0   Max.   :79.00   Max.   :14.400   Max.   :56  
+##                                                               
+##     CALF_SD         ANNRANGE         tot_deer_elk  
+##  Min.   :0.000   Min.   :   2.562   Min.   :    0  
+##  1st Qu.:0.000   1st Qu.:  41.457   1st Qu.: 2604  
+##  Median :0.000   Median : 178.747   Median : 9786  
+##  Mean   :1.783   Mean   : 551.329   Mean   : 9302  
+##  3rd Qu.:3.000   3rd Qu.: 639.717   3rd Qu.:13503  
+##  Max.   :8.600   Max.   :2742.693   Max.   :32360  
+## 
+</code></pre>
+
+<h2>Simplify your shapefile (if necessary)</h2>
+
+<p>Many shapefiles have significant detail that results in very large GeoJSON files. We will use the rgeos library to simplify. Note: if preserving topology is crucial, consider using tools in QGIS or GRASS GIS. For this demonstration we will restrict ourselves to R</p>
+
+<pre><code class="r">#save the data slot
+deer_unit_sub &lt;- deer_unit@data[,c(&quot;UName&quot;, &quot;UNum&quot;, &quot;AREA_km2&quot;, &quot;tot_deer_elk&quot;)]
+#simplification yields a SpatialPolygons class
+deer_unit &lt;- gSimplify(deer_unit, tol=0.01, topologyPreserve=TRUE)
+class(deer_unit)
+</code></pre>
+
+<pre><code>## [1] &quot;SpatialPolygons&quot;
+## attr(,&quot;package&quot;)
+## [1] &quot;sp&quot;
+</code></pre>
+
+<pre><code class="r">#to write to geojson we need a SpatialPolygonsDataFrame
+deer_unit &lt;- SpatialPolygonsDataFrame(deer_unit, data=deer_unit_sub)
+class(deer_unit)
+</code></pre>
+
+<pre><code>## [1] &quot;SpatialPolygonsDataFrame&quot;
+## attr(,&quot;package&quot;)
+## [1] &quot;sp&quot;
+</code></pre>
+
+<pre><code class="r">head(deer_unit@data)
+</code></pre>
+
+<pre><code>##            UName UNum AREA_km2 tot_deer_elk
+## 0           Zion   29 4454.250         9786
+## 1    Paunsaugunt   27 3873.350         5794
+## 2    Kaiparowitz   26 8127.691          550
+## 3    Pine Valley   30 6753.223        13210
+## 4 Panguitch Lake   28 2286.769        10035
+## 5     Mt. Dutton   24 1702.916         3870
+</code></pre>
+
+<h2>Use leafletR to produce the final online map</h2>
+
+<p>We are now ready to create the GeoJSON file. We will create the cuts we want to map and then create the Leaflet map</p>
+
+<pre><code class="r">#write data to GeoJSON
+dir &lt;- paste(getwd(), &quot;DeerElkGeoJson&quot;, sep=&quot;/&quot;)
+writeOGR(deer_unit, dir, layer=&quot;DeerElk&quot;, driver=&quot;GeoJSON&quot;)
+#a GeoJSON datasource is translated to single OGRLayer object with pre-defined name OGRGeoJSON&quot;
+ogrListLayers(paste(getwd(), &quot;DeerElkGeoJson&quot;, sep=&quot;/&quot;))
+</code></pre>
+
+<pre><code>## [1] &quot;OGRGeoJSON&quot;
+## attr(,&quot;driver&quot;)
+## [1] &quot;GeoJSON&quot;
+## attr(,&quot;nlayers&quot;)
+## [1] 1
+</code></pre>
+
+<pre><code class="r">ogrInfo(paste(getwd(), &quot;DeerElkGeoJson&quot;, sep=&quot;/&quot;), &quot;OGRGeoJSON&quot;)
+</code></pre>
+
+<pre><code>## Source: &quot;D:/Google Drive/IALE2015/r_code/module5/DeerElkGeoJson&quot;, layer: &quot;OGRGeoJSON&quot;
+## Driver: GeoJSON number of rows 29 
+## Feature type: wkbMultiPolygon with 2 dimensions
+## Extent: (-114.0572 37.00046) - (-109.0348 42.00169)
+## CRS: +proj=longlat +ellps=WGS84 +towgs84=0,0,0,0,0,0,0 +no_defs  
+## Number of fields: 4 
+##           name type length typeName
+## 1        UName    4      0   String
+## 2         UNum    0      0  Integer
+## 3     AREA_km2    2      0     Real
+## 4 tot_deer_elk    2      0     Real
+</code></pre>
+
+<p>Create the cuts</p>
+
+<pre><code class="r">cuts &lt;- round(quantile(deer_unit$tot_deer_elk, probs = seq(0, 1, 0.20), na.rm = FALSE), 0)
+</code></pre>
+
+<p>Choose fields to include in the popup</p>
+
+<pre><code class="r">popup &lt;- c(&quot;UName&quot;, &quot;UNum&quot;, &quot;AREA_km2&quot;, &quot;tot_deer_elk&quot;)
+</code></pre>
+
+<p>Graduated style symbology based on an attribute</p>
+
+<pre><code class="r">sty &lt;- styleGrad(prop=&quot;tot_deer_elk&quot;, breaks=cuts, closure=&quot;left&quot;, style.par=&quot;col&quot;, 
+                 style.val=rev(heat.colors(5)), leg=&quot;Deer &amp; Elk Population&quot;, lwd=1)
+</code></pre>
+
+<p>Create the map and load into browser</p>
+
+<pre><code class="r">map &lt;- leaflet(data=dir, dest=getwd(), style=sty,
+             title=&quot;DeerElk&quot;, base.map=&quot;osm&quot;,
+             incl.data=TRUE,  popup=popup)
+</code></pre>
+
+<p>To look at the map you can use this code</p>
+
+<pre><code class="r">browseURL(map)
+</code></pre>
+
+<h2><em>Module 5.2: Create Leaflet heat maps</em></h2>
+
+<p>In this module, we will work on a dataset containing abundance records of bay laurel (UMCA) trees in the Sonoma county, California. After reading in and cleaning the dataset, we will create a leaflet heat map using a JavaScript plugin.</p>
+
+<h2>Get and subset data</h2>
+
+<pre><code class="r">#read in data table 
+tree_dat &lt;- read.csv(&quot;./data/plots_umca_infection.csv&quot;, header=T)
+#read plot locations shapefile
+plots &lt;- readOGR(dsn=&#39;./data&#39;, layer=&#39;plot_202_latlon&#39;)
+</code></pre>
+
+<pre><code>## OGR data source with driver: ESRI Shapefile 
+## Source: &quot;./data&quot;, layer: &quot;plot_202_latlon&quot;
+## with 202 features and 5 fields
+## Feature type: wkbPoint with 2 dimensions
+</code></pre>
+
+<pre><code class="r">#using the `dplyr` package by Hadley Wickham, let&#39;s subset data for year 2012 only.
+tree_dat_2012 &lt;- tree_dat %&gt;%
+     select(plot, year, tot_bay) %&gt;%
+     group_by(plot) %&gt;%
+     filter(year == 2012)
+tree_dat_2012
+</code></pre>
+
+<pre><code>## Source: local data frame [179 x 3]
+## Groups: plot
+## 
+##     plot year tot_bay
+## 1  ANN01 2012      26
+## 2  ANN02 2012      10
+## 3  ANN03 2012      45
+## 4  ANN04 2012      13
+## 5  ANN05 2012      14
+## 6  ANN06 2012      10
+## 7  ANN07 2012       3
+## 8  ANN08 2012       5
+## 9  ANN09 2012       5
+## 10 ANN10 2012       5
+## ..   ...  ...     ...
+</code></pre>
+
+<h2>Add geographic coordinates</h2>
+
+<p>We have 202 plot locations in the shapefile but our dataset only has 179. Let&#39;s subset coordinates only for the matching ones.</p>
+
+<pre><code class="r">name_match &lt;- match(tree_dat_2012$plot, plots@data$PLOT_ID)
+tree_dat_2012 &lt;- cbind(plots@data[name_match, c(&quot;POINT_Y&quot;,&quot;POINT_X&quot;)], tree_dat_2012)
+names(tree_dat_2012)[1:2] &lt;- c(&quot;lat&quot;, &quot;lon&quot;) 
+#get rid of the year and plot variables.
+tree_dat_2012 &lt;- tree_dat_2012[ ,!names(tree_dat_2012) %in% c(&quot;year&quot;,&quot;plot&quot;)]
+head(tree_dat_2012)
+</code></pre>
+
+<pre><code>##        lat       lon tot_bay
+## 1 38.44411 -122.6268      26
+## 2 38.44259 -122.6269      10
+## 3 38.44029 -122.6178      45
+## 4 38.44006 -122.6297      13
+## 5 38.43750 -122.6206      14
+## 6 38.43742 -122.6408      10
+</code></pre>
+
+<h2>Create new Leaflet map</h2>
+
+<p>Create new Leaflet map and plot study area centered on our coordinates</p>
+
+<pre><code class="r">#create a new leaflet map instance
+Lmap &lt;- Leaflet$new()
+#set the view and zoom to the desired study area. Let&#39;s center it on our mean lat-lon coordinates
+Lmap$setView(c(mean(tree_dat_2012$lat), mean(tree_dat_2012$lon)), 10)
+#add a basemap using OSM 
+Lmap$tileLayer(provider = &quot;MapQuestOpen.OSM&quot;)
+#plot the study area (.html file is created locally)
+Lmap
+</code></pre>
+
+<pre><code>## &lt;iframe src=&#39; figure/leaflet_map-1.html &#39; scrolling=&#39;no&#39; frameBorder=&#39;0&#39; seamless class=&#39;rChart leaflet &#39; id=iframe- chart47471361ebe &gt;&lt;/iframe&gt; &lt;style&gt;iframe.rChart{ width: 100%; height: 400px;}&lt;/style&gt;
+</code></pre>
+
+<h2>Convert data to JSON format</h2>
+
+<pre><code class="r">tree_dat &lt;- toJSONArray2(na.omit(tree_dat_2012), json = F, names = F)
+#let&#39;s print out the first two elements of the JSON file
+cat(rjson::toJSON(tree_dat[1:2]), &#39;\n&#39;)
+</code></pre>
+
+<pre><code>## [[38.444108098,-122.626806828,26],[38.4425944789,-122.626940672,10]]
+</code></pre>
+
+<h2>Add leaflet-heat plugin and create heat maps</h2>
+
+<pre><code class="r">#add leaflet-heat plugin. Thanks to Vladimir Agafonkin
+Lmap$addAssets(jshead = c(
+  &quot;http://leaflet.github.io/Leaflet.heat/dist/leaflet-heat.js&quot;
+))
+
+#add javascript to modify underlying chart
+Lmap$setTemplate(afterScript = sprintf(&quot;
+&lt;script&gt;
+  var addressPoints = %s
+  var heat = L.heatLayer(addressPoints).addTo(map)           
+&lt;/script&gt;
+&quot;, rjson::toJSON(tree_dat)
+))
+#plot heat map of UMCA tree abundance (.html file is created locally)
+Lmap
+</code></pre>
+
+<pre><code>## &lt;iframe src=&#39; figure/heat_map-1.html &#39; scrolling=&#39;no&#39; frameBorder=&#39;0&#39; seamless class=&#39;rChart leaflet &#39; id=iframe- chart47471361ebe &gt;&lt;/iframe&gt; &lt;style&gt;iframe.rChart{ width: 100%; height: 400px;}&lt;/style&gt;
+</code></pre>
+
+<h2><em>Module 5.3: Create animated choropleths</em></h2>
+
+<p>The following tutorial is based on the <a href="http://rmaps.github.io/blog/posts/animated-choropleths/index.html">rMaps</a> online tutorial used to create animated choropleths. The data selected are different from the original. </p>
+
+<h2>Get Data</h2>
+
+<p>The first step to creating any visualization is getting the data. Let us fetch time-series data on burglaries in the US, from <a href="https://www.quandl.com/">Quandl</a>. </p>
+
+<pre><code class="r">rbData = Quandl(&quot;FBI_UCR/USCRIME_TYPE_BURGLARIES&quot;)
+rbData[1:10, 1:5]
+</code></pre>
+
+<pre><code>##          Year Alabama Alaska Arizona Arkansas
+## 1  2010-12-31   42034   3105   50771    32511
+## 2  2009-12-31   48844   3600   54308    34753
+## 3  2008-12-31   50379   3232   58125    33772
+## 4  2007-12-31   45360   3683   59290    31874
+## 5  2006-12-31   44561   4122   58768    32450
+## 6  2005-12-31   43473   4131   56328    30118
+## 7  2004-12-31   44666   3773   56885    30151
+## 8  2003-12-31   43245   3874   58613    25016
+## 9  2002-12-31   42578   3908   59087    23229
+## 10 2001-12-31   40642   3847   54821    22196
+</code></pre>
+
+<h2>Reshape the data into wide-form</h2>
+
+<p>The dataset is in the wide-form. The first step is to convert it into the long-form (more convenient for visualization purposes). Moreover, we remove data for the US as a whole, as well as for DC, so that the crime rates across entities (states) are comparable</p>
+
+<pre><code class="r">datm &lt;- melt(rbData, &#39;Year&#39;, 
+  variable.name = &#39;State&#39;,
+  value.name = &#39;Crime&#39;
+)
+datm &lt;- subset(na.omit(datm), 
+  !(State %in% c(&quot;United States&quot;, &quot;District of Columbia&quot;))
+)
+head(datm)
+</code></pre>
+
+<pre><code>##         Year   State Crime
+## 1 2010-12-31 Alabama 42034
+## 2 2009-12-31 Alabama 48844
+## 3 2008-12-31 Alabama 50379
+## 4 2007-12-31 Alabama 45360
+## 5 2006-12-31 Alabama 44561
+## 6 2005-12-31 Alabama 43473
+</code></pre>
+
+<h2>Categorize crime rates</h2>
+
+<p>Crime rates need to be discretized. One way to do this is to divide them into quartiles</p>
+
+<pre><code class="r">datm2 &lt;- transform(datm,
+  State = state.abb[match(as.character(State), state.name)],
+  fillKey = cut(Crime, quantile(Crime, seq(0, 1, 1/4)), labels = LETTERS[1:4]),
+  Year = as.numeric(substr(Year, 1, 4))
+)
+</code></pre>
+
+<h2>Associate classification with fill colors</h2>
+
+<p>Each quartile needs to be associated with a fill color chosen from a palette</p>
+
+<pre><code class="r">fills = setNames(
+  c(RColorBrewer::brewer.pal(4, &#39;OrRd&#39;), &#39;white&#39;),
+  c(LETTERS[1:4], &#39;defaultFill&#39;)
+)
+</code></pre>
+
+<h2>Convert to data structure for the <code>DataMaps</code> library</h2>
+
+<p>We need to convert the data frame into a list of lists. We will use Hadley&#39;s <code>plyr</code> package to simplify the code</p>
+
+<pre><code class="r">dat2 &lt;- dlply(na.omit(datm2), &quot;Year&quot;, function(x){
+  y = toJSONArray(x, json = F)
+  names(y) = lapply(y, &#39;[[&#39;, &#39;State&#39;)
+  return(y)
+})
+names(dat2)
+</code></pre>
+
+<pre><code>##  [1] &quot;1960&quot; &quot;1961&quot; &quot;1962&quot; &quot;1963&quot; &quot;1964&quot; &quot;1965&quot; &quot;1966&quot; &quot;1967&quot; &quot;1968&quot; &quot;1969&quot;
+## [11] &quot;1970&quot; &quot;1971&quot; &quot;1972&quot; &quot;1973&quot; &quot;1974&quot; &quot;1975&quot; &quot;1976&quot; &quot;1977&quot; &quot;1978&quot; &quot;1979&quot;
+## [21] &quot;1980&quot; &quot;1981&quot; &quot;1982&quot; &quot;1983&quot; &quot;1984&quot; &quot;1985&quot; &quot;1986&quot; &quot;1987&quot; &quot;1988&quot; &quot;1989&quot;
+## [31] &quot;1990&quot; &quot;1991&quot; &quot;1992&quot; &quot;1993&quot; &quot;1994&quot; &quot;1995&quot; &quot;1996&quot; &quot;1997&quot; &quot;1998&quot; &quot;1999&quot;
+## [41] &quot;2000&quot; &quot;2001&quot; &quot;2002&quot; &quot;2003&quot; &quot;2004&quot; &quot;2005&quot; &quot;2006&quot; &quot;2007&quot; &quot;2008&quot; &quot;2009&quot;
+## [51] &quot;2010&quot;
+</code></pre>
+
+<pre><code class="r">#dat2[[&quot;1960&quot;]] to inspect a list element
+</code></pre>
+
+<h2>Create a simple choropeth map</h2>
+
+<p>We can now create a simple choropleth map of crime rates for a given year. The Datamaps reference class gives us simple bindings to the DataMaps library</p>
+
+<pre><code class="r">options(rcharts.cdn = TRUE)
+map &lt;- Datamaps$new()
+map$set(
+  dom = &#39;chart_1&#39;,
+  scope = &#39;usa&#39;,
+  fills = fills,
+  data = dat2[[&quot;1980&quot;]],
+  legend = TRUE,
+  labels = TRUE
+)
+map
+</code></pre>
+
+<pre><code>## &lt;iframe src=&#39; figure/simple choro map-1.html &#39; scrolling=&#39;no&#39; frameBorder=&#39;0&#39; seamless class=&#39;rChart datamaps &#39; id=iframe- chart_1 &gt;&lt;/iframe&gt; &lt;style&gt;iframe.rChart{ width: 100%; height: 400px;}&lt;/style&gt;
+</code></pre>
+
+<h2>Create a dynamic choropeth map</h2>
+
+<p>Use a customized wrapper function that absorbs js code to produce a dynamic choropeth map</p>
+
+<pre><code class="r">source(&#39;ichoropleth.R&#39;)
+map2 &lt;- ichoropleth(Crime ~ State,
+  data = datm2[,1:3],
+  pal = &#39;OrRd&#39;, #color ramp
+  ncuts = 4,  #quartiles
+  animate = &#39;Year&#39;
+)
+map2
+</code></pre>
+
+<pre><code>## &lt;iframe src=&#39; figure/dynamic choro map-1.html &#39; scrolling=&#39;no&#39; frameBorder=&#39;0&#39; seamless class=&#39;rChart datamaps &#39; id=iframe- chart474107b7b2f &gt;&lt;/iframe&gt; &lt;style&gt;iframe.rChart{ width: 100%; height: 400px;}&lt;/style&gt;
+</code></pre>
+
+</body>
+
+</html>

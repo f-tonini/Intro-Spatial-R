@@ -1,0 +1,307 @@
+# Module 5: Interactive online mapping and visualization using R
+
+**author: Francesco Tonini**  
+**email: ftonini84@gmail.com**  
+**date: June 8, 2015**  
+**event: IALE 2015 R GIS Workshop**
+
+### Goal: Learn how to create interactive online maps with R
+
+## R Packages Needed
+
+```{r load packages, message = FALSE}
+library(rgdal)   #for reading/writing geo files
+library(rgeos)   #for simplification
+library(sp)
+library(plyr)
+library(dplyr)
+library(leafletR)
+library(maptools)
+library(RColorBrewer)
+library(Quandl)
+library(reshape2)
+```
+
+```{r load devtools, message = FALSE}
+library(devtools)
+##The R packages rCharts and rMaps are not available on CRAN yet.
+##Run the following code to install from Github repo prior to loading the libraries:
+##install_github('ramnathv/rCharts')
+##install_github('ramnathv/rMaps')
+library(rCharts)
+library(rMaps)
+```
+
+## Set Your Working Directory
+
+Change this to the correct path name on your machine
+
+```{r set working directory, eval=FALSE}
+setwd("D:/Google Drive/IALE2015/r_code/module5")
+#setwd("path_to_your_folder")   # for Windows users
+#setwd("~/path_to_your_folder"") # ~ for Mac users
+```
+
+## *Module 5.1: Create an interactive online map using the leafletR package*
+
+## Read shapefiles
+
+Here we import a polygon boundary of the state of Utah and a set of polygons representing game management units within the state.
+
+```{r read shapefiles}
+deer_unit <- readOGR(dsn = "data", layer = "deerrange_UT") # Game management units
+```
+
+The attribute data is stored in a slot called `@data` so if we just want to look at the data stored in the object:
+
+```{r summary shapefile data}
+summary(deer_unit@data)
+names(deer_unit) # The attribute data names
+class(deer_unit)
+```
+
+## Calculate a new field for vector data
+
+Calculating a new field is as easy as adding a new column to any other data frame in `R`. Say we want to calcualte a new field from the existing data, such as the total number of adult deer and elk in each management unit:
+
+```{r calculate new field}
+deer_unit$tot_deer_elk <- rowSums(cbind(deer_unit$DEER, deer_unit$ELK))
+summary(deer_unit@data)
+```
+
+## Simplify your shapefile (if necessary)
+
+Many shapefiles have significant detail that results in very large GeoJSON files. We will use the rgeos library to simplify. Note: if preserving topology is crucial, consider using tools in QGIS or GRASS GIS. For this demonstration we will restrict ourselves to R
+
+```{r simplify shapefile}
+#save the data slot
+deer_unit_sub <- deer_unit@data[,c("UName", "UNum", "AREA_km2", "tot_deer_elk")]
+#simplification yields a SpatialPolygons class
+deer_unit <- gSimplify(deer_unit, tol=0.01, topologyPreserve=TRUE)
+class(deer_unit)
+#to write to geojson we need a SpatialPolygonsDataFrame
+deer_unit <- SpatialPolygonsDataFrame(deer_unit, data=deer_unit_sub)
+class(deer_unit)
+head(deer_unit@data)
+```
+
+## Use leafletR to produce the final online map
+
+We are now ready to create the GeoJSON file. We will create the cuts we want to map and then create the Leaflet map
+
+```{r write GeoJSON}
+#write data to GeoJSON
+dir <- paste(getwd(), "DeerElkGeoJson", sep="/")
+writeOGR(deer_unit, dir, layer="DeerElk", driver="GeoJSON")
+#a GeoJSON datasource is translated to single OGRLayer object with pre-defined name OGRGeoJSON"
+ogrListLayers(paste(getwd(), "DeerElkGeoJson", sep="/"))
+ogrInfo(paste(getwd(), "DeerElkGeoJson", sep="/"), "OGRGeoJSON")
+```
+
+Create the cuts
+
+```{r create cuts}
+cuts <- round(quantile(deer_unit$tot_deer_elk, probs = seq(0, 1, 0.20), na.rm = FALSE), 0)
+```
+
+Choose fields to include in the popup
+
+```{r popup fields}
+popup <- c("UName", "UNum", "AREA_km2", "tot_deer_elk")
+```
+
+Graduated style symbology based on an attribute
+
+```{r graduated style}
+sty <- styleGrad(prop="tot_deer_elk", breaks=cuts, closure="left", style.par="col", 
+                 style.val=rev(heat.colors(5)), leg="Deer & Elk Population", lwd=1)
+```
+
+Create the map and load into browser
+
+```{r create map, message=FALSE}
+map <- leaflet(data=dir, dest=getwd(), style=sty,
+             title="DeerElk", base.map="osm",
+             incl.data=TRUE,  popup=popup)
+```
+
+To look at the map you can use this code
+
+```{r browse map}
+browseURL(map)
+```
+
+## *Module 5.2: Create Leaflet heat maps*
+
+In this module, we will work on a dataset containing abundance records of bay laurel (UMCA) trees in the Sonoma county, California. After reading in and cleaning the dataset, we will create a leaflet heat map using a JavaScript plugin.
+
+## Get and subset data
+```{r get data}
+#read in data table 
+tree_dat <- read.csv("./data/plots_umca_infection.csv", header=T)
+#read plot locations shapefile
+plots <- readOGR(dsn='./data', layer='plot_202_latlon')
+#using the `dplyr` package by Hadley Wickham, let's subset data for year 2012 only.
+tree_dat_2012 <- tree_dat %>%
+     select(plot, year, tot_bay) %>%
+     group_by(plot) %>%
+     filter(year == 2012)
+tree_dat_2012
+```
+
+## Add geographic coordinates
+
+We have 202 plot locations in the shapefile but our dataset only has 179. Let's subset coordinates only for the matching ones.
+
+```{r add latlon}
+name_match <- match(tree_dat_2012$plot, plots@data$PLOT_ID)
+tree_dat_2012 <- cbind(plots@data[name_match, c("POINT_Y","POINT_X")], tree_dat_2012)
+names(tree_dat_2012)[1:2] <- c("lat", "lon") 
+#get rid of the year and plot variables.
+tree_dat_2012 <- tree_dat_2012[ ,!names(tree_dat_2012) %in% c("year","plot")]
+head(tree_dat_2012)
+```
+
+## Create new Leaflet map
+
+Create new Leaflet map and plot study area centered on our coordinates
+
+```{r leaflet_map, message=FALSE}
+#create a new leaflet map instance
+Lmap <- Leaflet$new()
+#set the view and zoom to the desired study area. Let's center it on our mean lat-lon coordinates
+Lmap$setView(c(mean(tree_dat_2012$lat), mean(tree_dat_2012$lon)), 10)
+#add a basemap using OSM 
+Lmap$tileLayer(provider = "MapQuestOpen.OSM")
+#plot the study area (.html file is created locally)
+Lmap
+```
+
+## Convert data to JSON format
+```{r convert to JSON}
+tree_dat <- toJSONArray2(na.omit(tree_dat_2012), json = F, names = F)
+#let's print out the first two elements of the JSON file
+cat(rjson::toJSON(tree_dat[1:2]), '\n')
+```
+
+## Add leaflet-heat plugin and create heat maps
+```{r heat_map, message=FALSE}
+#add leaflet-heat plugin. Thanks to Vladimir Agafonkin
+Lmap$addAssets(jshead = c(
+  "http://leaflet.github.io/Leaflet.heat/dist/leaflet-heat.js"
+))
+
+#add javascript to modify underlying chart
+Lmap$setTemplate(afterScript = sprintf("
+<script>
+  var addressPoints = %s
+  var heat = L.heatLayer(addressPoints).addTo(map)           
+</script>
+", rjson::toJSON(tree_dat)
+))
+#plot heat map of UMCA tree abundance (.html file is created locally)
+Lmap
+```
+
+## *Module 5.3: Create animated choropleths*
+
+The following tutorial is based on the [rMaps] (http://rmaps.github.io/blog/posts/animated-choropleths/index.html) online tutorial used to create animated choropleths. The data selected are different from the original. 
+
+## Get Data
+
+The first step to creating any visualization is getting the data. Let us fetch time-series data on burglaries in the US, from [Quandl] (https://www.quandl.com/). 
+
+```{r get Quandl data}
+rbData = Quandl("FBI_UCR/USCRIME_TYPE_BURGLARIES")
+rbData[1:10, 1:5]
+```
+
+## Reshape the data into wide-form
+
+The dataset is in the wide-form. The first step is to convert it into the long-form (more convenient for visualization purposes). Moreover, we remove data for the US as a whole, as well as for DC, so that the crime rates across entities (states) are comparable
+
+```{r reshape data}
+datm <- melt(rbData, 'Year', 
+  variable.name = 'State',
+  value.name = 'Crime'
+)
+datm <- subset(na.omit(datm), 
+  !(State %in% c("United States", "District of Columbia"))
+)
+head(datm)
+```
+
+## Categorize crime rates
+
+Crime rates need to be discretized. One way to do this is to divide them into quartiles
+
+```{r discretize data}
+datm2 <- transform(datm,
+  State = state.abb[match(as.character(State), state.name)],
+  fillKey = cut(Crime, quantile(Crime, seq(0, 1, 1/4)), labels = LETTERS[1:4]),
+  Year = as.numeric(substr(Year, 1, 4))
+)
+```
+
+## Associate classification with fill colors
+
+Each quartile needs to be associated with a fill color chosen from a palette
+
+```{r fill color}
+fills = setNames(
+  c(RColorBrewer::brewer.pal(4, 'OrRd'), 'white'),
+  c(LETTERS[1:4], 'defaultFill')
+)
+```
+
+## Convert to data structure for the `DataMaps` library
+
+We need to convert the data frame into a list of lists. We will use Hadley's `plyr` package to simplify the code
+
+```{r convert data frame}
+dat2 <- dlply(na.omit(datm2), "Year", function(x){
+  y = toJSONArray(x, json = F)
+  names(y) = lapply(y, '[[', 'State')
+  return(y)
+})
+names(dat2)
+#dat2[["1960"]] to inspect a list element
+```
+
+## Create a simple choropeth map
+
+We can now create a simple choropleth map of crime rates for a given year. The Datamaps reference class gives us simple bindings to the DataMaps library
+
+```{r simple choro map}
+options(rcharts.cdn = TRUE)
+map <- Datamaps$new()
+map$set(
+  dom = 'chart_1',
+  scope = 'usa',
+  fills = fills,
+  data = dat2[["1980"]],
+  legend = TRUE,
+  labels = TRUE
+)
+map
+```
+
+## Create a dynamic choropeth map
+
+Use a customized wrapper function that absorbs js code to produce a dynamic choropeth map
+
+```{r dynamic choro map, echo=-1}
+setwd("D:/Google Drive/IALE2015/r_code/module5")
+source('ichoropleth.R')
+map2 <- ichoropleth(Crime ~ State,
+  data = datm2[,1:3],
+  pal = 'OrRd', #color ramp
+  ncuts = 4,  #quartiles
+  animate = 'Year'
+)
+map2
+```
+
+
+
+
