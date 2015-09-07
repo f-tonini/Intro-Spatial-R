@@ -26,10 +26,9 @@ library(latticeExtra)
 Change this to the correct path name on your machine
 
 ```{r set working directory, eval=FALSE}
-setwd("D:/Google Drive/IALE2015")
+setwd("~/Documents/Intro-Spatial-R/module3")
 ```
-
-This is the syntax for the path on an Apple/Mac for a subfolder in the `Documents` directory.
+This is the syntax for the path on an Apple/Mac for a subfolder in the `Documents` directory. To find out your current working directory in `R` run the command `getwd()` and use `setwd()` to set you working directory. Help for loaded `R` functions can be accessed by running `?function_name` on the command line, e.g. `?setwd`
 
 ## Read in Shapefiles
 
