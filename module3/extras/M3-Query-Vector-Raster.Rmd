@@ -133,7 +133,8 @@ names(ndvi500m.wgs84) <- "ndvi" # Change raster attribute name
 Note that the projection is in decimal degrees and thus the grain and extent are also given in decimal degrees. Next, check that the projections are all the same:
 
 ```{r check projections}
-all.equal(proj4string(deer_unit), proj4string(utah.wgs84), proj4string(ndvi500m.wgs84))
+all.equal(proj4string(deer_unit), proj4string(utah.wgs84))
+all.equal(proj4string(deer_unit), proj4string(ndvi500m.wgs84))
 ```
 
 The `all.equal` function returns `TRUE` if the objects are all the same, and `FALSE` otherwise. So, all of these layers have exactly the same `proj4` string. 
