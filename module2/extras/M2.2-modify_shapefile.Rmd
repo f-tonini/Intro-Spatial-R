@@ -1,0 +1,143 @@
+## START MODULE 2.2
+
+Objectives: How to change (re-project) or assign a projection or resolution to vector-based data. 
+
+MODULE 2.2 CODE BY: 
+
+Thomas C. Edwards, U.S. Geological Survey and Department of Wildland Resources
+
+Utah State University, Logan UT 84322-5230 USA t.edwards@usu.edu
+
+(Tested on R versions 3.1.X, 3.2.X)
+
+Load packages
+
+```{r load packages}
+   library(raster)    # fxns: raster, projectRaster, rasterize, brick, stack
+   library(rgdal)     # fxns: readOGR, spTransform
+   library(maptools)  # fxns: readShapePoly
+```
+
+
+Some initializations: set working directory/path to data
+
+
+```{r set working directory}
+   path.root <- "~/Documents/Intro-Spatial-R/"
+   # path.dat="E:/IALE2015_gisRcourse/data"
+   # path.root <- "~/words/classes/IALE2015_gisRcourse"
+   path.mod <- paste(path.root, "module2", sep = "")
+   setwd(path.mod)
+```
+
+
+Projections are the key part of an GIS data, providing the connection between the data and their real position on the earth's surface. One source for projections: [spatialreference.org](http://spatialreference.org/). An example of access is shown in next line:
+
+**Home => Search => EX: "NAD83 Albers" => Click "AlbersNorthAmerican" => Click "Proj4js format"**
+
+This returns the projection string, which you can copy & paste, including quotes as below. NOTE: No hard returns are allowed in projection string assignment, R won't like you
+
+
+```{r Assign projections to objects in R}
+   prj.aea <- "+proj=aea +lat_1=29.5 +lat_2=45.5 +lat_0=23 +lon_0=-96 +x_0=0 +y_0=0 +datum=NAD83 +units=m +no_defs +ellps=GRS80 +towgs84=0,0,0"
+   prj.wgs84 <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0"
+```
+
+
+#### Import a shapefile using `readShapePOly`
+
+```{r import shapefile 1}
+   states1 <- readShapePoly("data/na_states_wgs")  # naive call
+   states1  # examine; NOTE no projection (coord.ref); coordinates imply projection type
+```
+
+
+#### Import a shapefile & assign projection during import
+NOTE: fxn readShapePoly assumes you know projection 
+
+```{r import shapefile 2}
+   states2 <- readShapePoly("data/na_states_wgs", proj4string = CRS(prj.wgs84))
+   states2  # examine; NOTE projection (coord.ref) now assigned
+```
+
+#### Import and change projection during import using `readShapePoly`
+
+```{r read in states shapefile readShapePoly}
+   states3 <- readShapePoly("data/na_states_wgs", proj4string = CRS(prj.aea))
+   states3  # examine; NOTE change in projection (ccord.ref)
+```
+
+
+#### Import a shapefile using `readOGR`
+
+
+```{r read in states shapefile readOGR}
+   states4 <- readOGR(dsn = "data", layer = "na_states_wgs")  
+   states4  # examine; NOTE readOGR automatically assigns projection (coord. ref)
+   states5 <- spTransform(states4, CRS = CRS(prj.aea))# change import projection (WGS84) to desired projection (AEA)
+   states5  # examine; NOTE change in projection (ccord.ref)
+```
+
+
+#### Import and convert a shapepoly to a raster (grid)
+This assumes a "base" grid from elsewhere for raster conversion; here => ext.rast
+
+
+```{r read in soil data shapefile}
+   soil.raw <- readOGR(dsn = "data", layer = "soils")  # be patient here ... ~3 min runtime
+   soil.raw  # examine 
+```
+
+
+To rasterize the shapepoly to the "base" raster => ext.rast you must select attribute to rasterize; use field="attribute name or column number" option. Be patient here ... ~4-5 min runtimes
+
+Rasterize 2 selected attributes to a given base raster => ext.rast. This will take some time to process, so be patient, take a short break...
+
+
+```{r rasterize shapefile attributes}
+   cp.wgs <- readOGR(dsn = "data", layer = "COP_boundpoly_wgs84")
+   ext.rast <- raster(resolution = 0.008333333, extent(cp.wgs))
+   
+   names(soil.raw)  # attribute names to select from
+   cp.soil.1 <- rasterize(soil.raw, field="phave", ext.rast)
+   names(cp.soil.1) <- "phave"
+   cp.soil.1  # examine
+   cp.soil.2 <- rasterize(soil.raw, field="awc", ext.rast)
+   names(cp.soil.2) <- "awc"
+   cp.soil.2  # examine
+```
+
+
+You can also build simple loop to perform all operations, creating a raster layer for each specified field
+
+
+```{r Loop across shapefile fields to create rasters of each}
+   soil.var <- c("awc", "phave")  # list of desired variables from shapefile polygon
+   soil.list <- list(length(soil.var))  # initialize a blank list
+## start loop; be patient ... can be time-consuming depending on CPU
+##   NOTE ~5 min runtime for this example
+for (i in 1:length(soil.var)) {
+   ## status breadcrumbs ....
+   print("##########");  print("Where the Hell am I in this process????");  print(date())
+   print(paste("Step is", i, "of", length(soil.var)));  print(paste("Soil is:", soil.var[i]))
+   flush.console()
+   ## create stand-alone objects for each soil var; will be in workspace at end of loop
+   assign(paste("cp.", soil.var[i], sep = ""), 
+          rasterize(soil.raw, ext.rast, field = soil.var[i]))
+   ## add each created soil layer to soil list
+   soil.list[[i]] <- get(paste("cp.", soil.var[i], sep = ""))
+   }
+## examine list of output raster & rename
+   soil.list  # examine; NOTE is a list of rasters
+   names(soil.list) <- soil.var
+```
+
+
+## END MODULE 2.2
+
+Create R markdown file from R script   
+
+```{r }
+   knitr::spin("Rscripts/M2.2-modify_shapefile.r", knit = F, format = "Rmd")
+```
+
