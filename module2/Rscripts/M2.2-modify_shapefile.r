@@ -11,13 +11,14 @@
 #' (Tested on R versions 3.1.X, 3.2.X)
 #'
 #' Load packages
-#+ 
+#+ load packages
    library(raster)    # fxns: raster, projectRaster, rasterize, brick, stack
    library(rgdal)     # fxns: readOGR, spTransform
    library(maptools)  # fxns: readShapePoly
 #'
 #' Some initializations: set working directory/path to data
-#+
+#' 
+#+ set working directory
    path.root <- "~/Documents/Intro-Spatial-R/"
    # path.dat="E:/IALE2015_gisRcourse/data"
    # path.root <- "~/words/classes/IALE2015_gisRcourse"
@@ -35,24 +36,24 @@
    prj.wgs84 <- "+proj=longlat +ellps=WGS84 +datum=WGS84 +no_defs +towgs84=0,0,0"
 #'
 #' #### Import a shapefile using `readShapePOly`
-#+
+#+ import shapefile 1
    states1 <- readShapePoly("data/na_states_wgs")  # naive call
    states1  # examine; NOTE no projection (coord.ref); coordinates imply projection type
 #'
 #' #### Import a shapefile & assign projection during import
 #' NOTE: fxn readShapePoly assumes you know projection 
-#+
+#+ import shapefile 2
    states2 <- readShapePoly("data/na_states_wgs", proj4string = CRS(prj.wgs84))
    states2  # examine; NOTE projection (coord.ref) now assigned
 
 #' #### Import and change projection during import using `readShapePoly`
-#+
+#+ read in states shapefile readShapePoly
    states3 <- readShapePoly("data/na_states_wgs", proj4string = CRS(prj.aea))
    states3  # examine; NOTE change in projection (ccord.ref)
 #'
 #' #### Import a shapefile using `readOGR`
-#' NOTE: dsn='.' is cur dir, layer='shapefile to import'
-#+
+#' 
+#+ read in states shapefile readOGR
    states4 <- readOGR(dsn = "data", layer = "na_states_wgs")  
    states4  # examine; NOTE readOGR automatically assigns projection (coord. ref)
    states5 <- spTransform(states4, CRS = CRS(prj.aea))# change import projection (WGS84) to desired projection (AEA)
@@ -60,14 +61,16 @@
 #'
 #' #### Import and convert a shapepoly to a raster (grid)
 #' This assumes a "base" grid from elsewhere for raster conversion; here => ext.rast
-#+
+#' 
+#+ read in soil data shapefile
    soil.raw <- readOGR(dsn = "data", layer = "soils")  # be patient here ... ~3 min runtime
-   soil.raw  # examine; NOTE 
+   soil.raw  # examine 
 #'
 #' To rasterize the shapepoly to the "base" raster => ext.rast you must select attribute to rasterize; use field="attribute name or column number" option. Be patient here ... ~4-5 min runtimes
 #' 
-#' Rasterize 2 selected attributes to a given base raster => ext.rast
-#+
+#' Rasterize 2 selected attributes to a given base raster => ext.rast. This will take some time to process, so be patient, take a short break...
+#' 
+#+ rasterize shapefile attributes
    cp.wgs <- readOGR(dsn = "data", layer = "COP_boundpoly_wgs84")
    ext.rast <- raster(resolution = 0.008333333, extent(cp.wgs))
    
@@ -80,7 +83,8 @@
    cp.soil.2  # examine
 #'
 #' You can also build simple loop to perform all operations, creating a raster layer for each specified field
-#+
+#' 
+#+ Loop across shapefile fields to create rasters of each
    soil.var <- c("awc", "phave")  # list of desired variables from shapefile polygon
    soil.list <- list(length(soil.var))  # initialize a blank list
 ## start loop; be patient ... can be time-consuming depending on CPU
@@ -100,4 +104,8 @@ for (i in 1:length(soil.var)) {
    soil.list  # examine; NOTE is a list of rasters
    names(soil.list) <- soil.var
 #'
-#'  **END MODULE 2.2**
+#' ## END MODULE 2.2
+#'
+#' Create R markdown file from R script   
+#+
+   knitr::spin("Rscripts/M2.2-modify_shapefile.r", knit = F, format = "Rmd")
