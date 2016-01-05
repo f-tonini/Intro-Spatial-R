@@ -12,17 +12,18 @@ library(reshape2)
 
 ## ----load devtools, message = FALSE--------------------------------------
 library(devtools)
-##The R packages rCharts and rMaps are not available on CRAN yet.
-##Run the following code to install from Github repo prior to loading the libraries:
-##install_github('ramnathv/rCharts')
-##install_github('ramnathv/rMaps')
+## The R packages rCharts and rMaps are not available on CRAN yet.
+## Run the following code to install from Github repo prior to loading the libraries:
+
+## install_github('ramnathv/rCharts')
+## install_github('ramnathv/rMaps')
 library(rCharts)
 library(rMaps)
 
 ## ----set working directory, eval=FALSE-----------------------------------
 ## setwd("D:/Google Drive/IALE2015/r_code/module5")
 ## #setwd("path_to_your_folder")   # for Windows users
-## #setwd("~/path_to_your_folder"") # ~ for Mac users
+setwd("~/Documents/Intro-Spatial-R/module5") # ~ for Mac users
 
 ## ----read shapefiles-----------------------------------------------------
 deer_unit <- readOGR(dsn = "data", layer = "deerrange_UT") # Game management units
@@ -42,16 +43,17 @@ deer_unit_sub <- deer_unit@data[,c("UName", "UNum", "AREA_km2", "tot_deer_elk")]
 #simplification yields a SpatialPolygons class
 deer_unit <- gSimplify(deer_unit, tol=0.01, topologyPreserve=TRUE)
 class(deer_unit)
+
 #to write to geojson we need a SpatialPolygonsDataFrame
 deer_unit <- SpatialPolygonsDataFrame(deer_unit, data=deer_unit_sub)
 class(deer_unit)
 head(deer_unit@data)
 
 ## ----write GeoJSON-------------------------------------------------------
-#write data to GeoJSON
+# write data to GeoJSON
 dir <- paste(getwd(), "DeerElkGeoJson", sep="/")
 writeOGR(deer_unit, dir, layer="DeerElk", driver="GeoJSON")
-#a GeoJSON datasource is translated to single OGRLayer object with pre-defined name OGRGeoJSON"
+# a GeoJSON datasource is translated to single OGRLayer object with pre-defined name OGRGeoJSON"
 ogrListLayers(paste(getwd(), "DeerElkGeoJson", sep="/"))
 ogrInfo(paste(getwd(), "DeerElkGeoJson", sep="/"), "OGRGeoJSON")
 
@@ -74,11 +76,11 @@ map <- leaflet(data=dir, dest=getwd(), style=sty,
 browseURL(map)
 
 ## ----get data------------------------------------------------------------
-#read in data table 
+# read in data table 
 tree_dat <- read.csv("./data/plots_umca_infection.csv", header=T)
-#read plot locations shapefile
+# read plot locations shapefile
 plots <- readOGR(dsn='./data', layer='plot_202_latlon')
-#using the `dplyr` package by Hadley Wickham, let's subset data for year 2012 only.
+# using the `dplyr` package by Hadley Wickham, let's subset data for year 2012 only.
 tree_dat_2012 <- tree_dat %>%
      select(plot, year, tot_bay) %>%
      group_by(plot) %>%
@@ -89,32 +91,32 @@ tree_dat_2012
 name_match <- match(tree_dat_2012$plot, plots@data$PLOT_ID)
 tree_dat_2012 <- cbind(plots@data[name_match, c("POINT_Y","POINT_X")], tree_dat_2012)
 names(tree_dat_2012)[1:2] <- c("lat", "lon") 
-#get rid of the year and plot variables.
+# get rid of the year and plot variables.
 tree_dat_2012 <- tree_dat_2012[ ,!names(tree_dat_2012) %in% c("year","plot")]
 head(tree_dat_2012)
 
 ## ----leaflet_map, message=FALSE------------------------------------------
-#create a new leaflet map instance
+# create a new leaflet map instance
 Lmap <- Leaflet$new()
-#set the view and zoom to the desired study area. Let's center it on our mean lat-lon coordinates
+# set the view and zoom to the desired study area. Let's center it on our mean lat-lon coordinates
 Lmap$setView(c(mean(tree_dat_2012$lat), mean(tree_dat_2012$lon)), 10)
-#add a basemap using OSM 
+# add a basemap using OSM 
 Lmap$tileLayer(provider = "MapQuestOpen.OSM")
-#plot the study area (.html file is created locally)
+# plot the study area (.html file is created locally)
 Lmap
 
 ## ----convert to JSON-----------------------------------------------------
 tree_dat <- toJSONArray2(na.omit(tree_dat_2012), json = F, names = F)
-#let's print out the first two elements of the JSON file
+# let's print out the first two elements of the JSON file
 cat(rjson::toJSON(tree_dat[1:2]), '\n')
 
 ## ----heat_map, message=FALSE---------------------------------------------
-#add leaflet-heat plugin. Thanks to Vladimir Agafonkin
+# add leaflet-heat plugin. Thanks to Vladimir Agafonkin
 Lmap$addAssets(jshead = c(
   "http://leaflet.github.io/Leaflet.heat/dist/leaflet-heat.js"
 ))
 
-#add javascript to modify underlying chart
+# add javascript to modify underlying chart
 Lmap$setTemplate(afterScript = sprintf("
 <script>
   var addressPoints = %s
@@ -122,7 +124,7 @@ Lmap$setTemplate(afterScript = sprintf("
 </script>
 ", rjson::toJSON(tree_dat)
 ))
-#plot heat map of UMCA tree abundance (.html file is created locally)
+# plot heat map of UMCA tree abundance (.html file is created locally)
 Lmap
 
 ## ----get Quandl data-----------------------------------------------------
@@ -175,12 +177,11 @@ map$set(
 map
 
 ## ----dynamic choro map, echo=-1------------------------------------------
-setwd("D:/Google Drive/IALE2015/r_code/module5")
-source('ichoropleth.R')
+source('Rscripts/ichoropleth.R')
 map2 <- ichoropleth(Crime ~ State,
   data = datm2[,1:3],
-  pal = 'OrRd', #color ramp
-  ncuts = 4,  #quartiles
+  pal = 'OrRd', # color ramp
+  ncuts = 4,  # quartiles
   animate = 'Year'
 )
 map2
