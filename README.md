@@ -5,17 +5,17 @@ This repo contains all the scripts and materials used for the student-oriented w
 Jill Deines, Tom Edwards, Whalen Dillon, Karl Jarvis, Francesco Tonini
 
 ## Workshop Contents
-### Module 1: Getting GIS Data In and Out of R
+### [Module 1: Getting GIS Data In and Out of R](https://github.com/f-tonini/Intro-Spatial-R/tree/master/module1)
 * M1.1: Importing and Exporting Vector GIS Data in R
 * M1.2: Importing and Exporting Raster GIS Data in R
 
-### Module 2: Projections, Resolutions, and Extents
+### [Module 2: Projections, Resolutions, and Extents](https://github.com/f-tonini/Intro-Spatial-R/tree/master/module2)
 * M2.1 Accessing Vector and Raster Properties
 * M2.2 Modifying Vector Files (shapefiles)
 * M2.3 Modifying Rasters
 * M2.4 Reprojecting and Altering Extents and Resolution
 
-### Module 3: Modifying GIS Data in R
+### [Module 3: Modifying GIS Data in R](https://github.com/f-tonini/Intro-Spatial-R/tree/master/module3)
 Demonstrates the development of a workflow to manipulation and prepare data for further analysis.
 
 * How to query the attribute table of vector data
@@ -23,11 +23,11 @@ Demonstrates the development of a workflow to manipulation and prepare data for 
 * How to convert raster to vector & vector to raster
 * How to subset/mask data for analysis
 
-### Module 4: Analyzing GIS Data in R
+### [Module 4: Analyzing GIS Data in R](https://github.com/f-tonini/Intro-Spatial-R/tree/master/module4)
 * M4.1 Extract Values to Point Locations
 * M4.2 Analyze Raster and Vector Data
 
-### Module 5: Interactive Online Mapping and Visualization
+### [Module 5: Interactive Online Mapping and Visualization](https://github.com/f-tonini/Intro-Spatial-R/tree/master/module5)
 
 ## Software Requirements & Resources
 #### Downloading and installing R
